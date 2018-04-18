@@ -1,0 +1,235 @@
+<!--
+//  dashboard.html
+//  Attendance_Web
+//
+//  Created by Jake Wert on 5/13/16.
+//  Copyright © 2016 Jake Wert. All rights reserved.
+//
+//  This is the dashboard for the authenticated professor.
+//  The professor will be adding and removeing students and classes on this page.
+-->
+
+<!doctype html>
+<html ng-app="dashboardApp">
+<head>
+  <title>Professor Dashboard</title>
+  <meta charset="UTF-8">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+  <script src="https://cdn.firebase.com/js/client/2.2.1/firebase.js"></script>
+  <script src="https://cdn.firebase.com/libs/angularfire/1.0.0/angularfire.min.js"></script>
+  <script src="https://code.jquery.com/jquery-1.12.1.min.js"></script>
+  <script src="js/dashboard.js"></script>
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="css/attendance.css">
+</head>
+
+<body ng-controller="DashboardController">
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">Attendance</a>
+      </div>
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li><a href="index.html">Attendance Viewer<span class="sr-only">(current)</span></a></li>
+          <li class="active"><a href="dashboard.html">Professor Dashboard</a></li>
+          <li><a href="registerStudent.html">Register Student</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="profile.html">Edit Profile</a></li>
+          <li ng-click="logout()"><a href="login.html">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Attendance Viewer -->
+  <div class="box-container">
+    <h3>
+      Welcome, Professor {{ professor.lastName }}
+    </h3>
+
+    <div>
+      <h3>Your Classes</h3>
+      <div>
+        <table class="table-bordered table-hover">
+          <thead>
+            <tr>
+              <td>Class Name</td>
+              <td>Days</td>
+              <td>Time</td>
+              <td>Edit</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="obj in theClasses | filter: { instructor: professor } | orderBy:'className'">
+              <td><a href="javascript:void(0)" ng-click="selectClass(obj)"> {{ obj.className }} </a></td>
+              <td>{{ obj.days }}</td>
+              <td>{{ obj.startTime }}-{{ obj.endTime }}</td>
+              <td><button type="button" class="btn btn-default" ng-click="removeClass(obj)">Remove</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Header and button to show the form for new class-->
+    <div>
+      </br>
+      <button type="button" class="btn btn-default" ng-click="addingClass = true">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add a Class
+      </button>
+      </br>
+
+      <div ng-show="addingClass == true">
+        <h3>Add a Class</h3>
+        <form name="newClassForm" class="new-class">
+          <div class="form-group">
+            <label for="CRN">CRN:</label>
+            <input
+              type="number"
+              placeholder="31011"
+              min="0" max="99999"
+              ng-required="true"
+              class="form-control"
+              data-toggle="tooltip" data-placement="top" title="The 5-digit CRN number for the class"
+              ng-model="CRN" id="CRN">
+          </div>
+
+          <div class="form-group">
+            <label for="building">Building:</label>
+            <input type="text"
+              placeholder="Stuenkel"
+              ng-required="true"
+              class="form-control"
+              data-toggle="tooltip" data-placement="top" title="The building where the class meets"
+              ng-model="building" id="building">
+          </div>
+
+          <div class="form-group">
+            <label for="roomNumber">Room Number:</label>
+            <input
+              type="text"
+              placeholder="016"
+              ng-required="true"
+              data-toggle="tooltip" data-placement="top" title="The room number where the class meets"
+              class="form-control"
+              ng-model="roomNumber" id="roomNumber">
+          </div>
+
+          <div class="form-group">
+            <label for="courseNumber">Course Number:</label>
+            <input
+              type="number"
+              placeholder="101"
+              min="100"
+              max="999"
+              ng-required="true"
+              data-toggle="tooltip" data-placement="top" title="The number from the course name"
+              class="form-control"
+              ng-model="courseNumber" id="courseNumber">
+          </div>
+
+          <div class="form-group">
+            <label for="days">Days:</label>
+            <select multiple ng-required="true" class="form-control" ng-model="days" id="days">
+              <option value="M">Monday</option>
+              <option value="T">Tuesday</option>
+              <option value="W">Wednesday</option>
+              <option value="R">Thursday</option>
+              <option value="F">Friday</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="startTime">Start Time:</label>
+            <input type="time" ng-required="true" class="form-control" ng-model="startTime" id="startTime">
+          </div>
+
+          <div class="form-group">
+            <label for="endTime">End Time:</label>
+            <input type="time" ng-required="true" class="form-control" ng-model="endTime" id="endTime">
+          </div>
+
+          <div class="btn-group btn-group-justified">
+            <div class="btn-group">
+              <button
+                type="reset"
+                class="btn btn-danger"
+                style="outline: none;"
+                ng-click="addingClass = false">
+                Cancel
+              </button>
+            </div>
+
+            <div class="btn-group">
+              <button
+                type="submit"
+                class="btn btn-success"
+                style="outline: none;"
+                ng-click="newClassForm.$valid && addClass()">
+                Submit
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- The Class Roster -->
+    <div ng-show="theRoster != null">
+      <h3>{{ theClassName }} Students</h3>
+      <table class="table-bordered table-hover">
+        <thead>
+          <tr>
+            <td>Student ID No.</td>
+            <td>First Name</td>
+            <td>Last Name</td>
+            <td>Edit</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="student in theRoster | orderBy:'lastName'">
+            <td>{{ student.$id }}</td>
+            <td>{{ student.firstName }}</td>
+            <td>{{ student.lastName }}</td>
+            <td><button type="button" class="btn btn-default" ng-click="theRoster.$remove(student)">Remove</button></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Adding Students -->
+      </br>
+      <button type="button" class="btn btn-default" ng-click="addingStudent = true">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add a Student
+      </button>
+      </br>
+
+      <div ng-show="addingStudent == true" style="padding:15px 0px 0px;">
+        <select
+          ng-model="studentSelection"
+          data-ng-options="student as (student.lastName + ', ' + student.firstName) for student in allStudents"
+          ng-change="addStudent(studentSelection)"
+          class="form-control">
+          <option value="">Select Student</option>
+        </select>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!--
+//  index.html
+//  Attendance_Web
+//
+//  Created by Jake Wert on 5/13/16.
+//  Copyright © 2016 Jake Wert. All rights reserved.
+//
+//  This is the home page. It displays attendance and
+//  does not require authentication.
+-->
+
+<!doctype html>
+<html ng-app="indexApp">
+<head>
+  <title>Attendance Home</title>
+  <meta charset="UTF-8">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+  <script src="https://cdn.firebase.com/js/client/2.2.1/firebase.js"></script>
+  <script src="https://cdn.firebase.com/libs/angularfire/1.0.0/angularfire.min.js"></script>
+  <script src="https://code.jquery.com/jquery-1.12.1.min.js"></script>
+  <script src="js/index.js"></script>
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="css/attendance.css">
+</head>
+
+<body ng-controller="AttendanceController">
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">Attendance</a>
+      </div>
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="index.html">Attendance Viewer<span class="sr-only">(current)</span></a></li>
+          <li><a href="dashboard.html">Professor Dashboard</a></li>
+          <li><a href="registerStudent.html">Register Student</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="login.html" ng-show="authenticated == false">Login</a></li>
+          <li><a href="signup.html" ng-show="authenticated == false">Sign Up</a></li>
+          <li ng-show="authenticated == true"><a href="profile.html">Edit Profile</a></li>
+          <li ng-click="logout()" ng-show="authenticated == true"><a href="#">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Attendance Viewer -->
+  <div class="box-container">
+    <div>
+      <h3>Classes</h3>
+      <div>
+        <table class="table-bordered table-hover">
+          <thead>
+            <tr>
+              <td>Class Name</td>
+              <td>Days</td>
+              <td>Time</td>
+              <td>Instructor</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="obj in classes | orderBy:'className'">
+              <td><a href="javascript:void(0)" ng-click="selectClass(obj)"> {{ obj.className }} </a></td>
+              <td>{{ obj.days }}</td>
+              <td>{{ obj.startTime }}-{{ obj.endTime }}</td>
+              <td>{{ obj.instructor.firstName }} {{ obj.instructor.lastName }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Attendance -->
+    <div ng-show="classDates != null">
+      <h3>{{ theClassName }} Attendance</h3>
+      Date: <select ng-model="selection" ng-options="obj.$id for obj in classDates" ng-change="displayAttendance(selection)" class="form-control">
+      </select>
+      </br>
+      </br>
+
+      <table class="table-bordered table-hover" ng-show="theAttendance != null">
+        <thead>
+          <tr>
+            <td>Student ID No.</td>
+            <td>First Name</td>
+            <td>Last Name</td>
+            <td>Arrival Time</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="obj in theAttendance | orderBy:'$value'">
+            <td>{{ obj.$id }}</td>
+            <td>{{ theRoster.$getRecord(obj.$id).firstName }}</td>
+            <td>{{ theRoster.$getRecord(obj.$id).lastName }}</td>
+            <td>{{ obj.$value }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</body>
+</html>
