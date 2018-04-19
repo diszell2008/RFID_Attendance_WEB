@@ -27,59 +27,57 @@ function($scope, $firebaseArray)
   var ref = firebase.database().ref();
   var authData = firebase.auth().currentUser;
 
-  if(authData)
-  {
-    $scope.logout = function()
-    {
-      firebase.auth().signOut();
-      window.location.href = "login.html";
-    };
-
-    $scope.changePassword = function()
-    {
-      if($scope.newPassword == $scope.verificationPassword)
+  firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+      $scope.logout = function()
       {
-        ref.changePassword(
-          {
-            "email":authData.password.email,
-            "oldPassword":sha256_digest($scope.oldPassword),
-            "newPassword":sha256_digest($scope.newPassword)
-          },
-          function(error)
-          {
-            if (error)
-            {
-              switch (error.code)
-              {
-                case "INVALID_PASSWORD":
-                  alert("The specified user account password is incorrect.");
-                  break;
-                case "INVALID_USER":
-                  alert("The specified user account does not exist.");
-                  break;
-                default:
-                  alert("Unable to change password.");
-              }
-            }
-            else
-            {
-              alert("User password changed successfully!");
-              $scope.oldPassword = "";
-              $scope.newPassword = "";
-              $scope.verificationPassword = "";
-
-              $scope.$apply();
-            }
-          });
-        }
-        else
-        {
-          alert("New passwords do not match.");
-        }
+        firebase.auth().signOut();
+        window.location.href = "login.html";
       };
-    }
-    else
-    {
+      $scope.changePassword = function()
+      {
+        if($scope.newPassword == $scope.verificationPassword)
+        {
+          ref.changePassword(
+            {
+              "email":authData.password.email,
+              "oldPassword":sha256_digest($scope.oldPassword),
+              "newPassword":sha256_digest($scope.newPassword)
+            },
+            function(error)
+            {
+              if (error)
+              {
+                switch (error.code)
+                {
+                  case "INVALID_PASSWORD":
+                    alert("The specified user account password is incorrect.");
+                    break;
+                  case "INVALID_USER":
+                    alert("The specified user account does not exist.");
+                    break;
+                  default:
+                    alert("Unable to change password.");
+                }
+              }
+              else
+              {
+                alert("User password changed successfully!");
+                $scope.oldPassword = "";
+                $scope.newPassword = "";
+                $scope.verificationPassword = "";
+
+                $scope.$apply();
+              }
+            });
+          }
+          else
+          {
+            alert("New passwords do not match.");
+          }
+        };
+    } else {
       window.location.href = "login.html";
     }
-  }]);
+  });
+}]);
