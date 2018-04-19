@@ -30,13 +30,17 @@ function($scope, $firebaseArray, $filter)
   var refAllStudents = ref.child("Students");
   var refRoster;
 
-  $scope.addingClass = true;
-  $scope.addingStudent = true;
+  $scope.addingClass = false;
+  $scope.addingStudent = false;
   $scope.theRoster;
 
+  //Firebase Conect
   firebase.auth().onAuthStateChanged(function(user) {
     if (user)
     {
+      //Login successfully
+
+      //Define refInstructors
       var refInstructors = ref.child('Instructors');
       refInstructors.once("value", function(data)
       {
