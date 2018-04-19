@@ -67,26 +67,31 @@ var ref = firebase.database().ref();
 //               RDIF Mqtt listeners               //
 //-------------------------------------------------//
 
-var MQTT = require("async-mqtt");
+var MQTT = require("mqtt");
 
-var client = MQTT.connect("tcp://somehost.com:1883");
+var client = MQTT.connect("tcp://192.168.2.151:1883");
 
-// WHen passing async functions as event listeners, make sure to have a try catch block
-client.on("connect", doStuff);
-async function doStuff() {
+client.on('connect', () => {
+  client.subscribe('rfid/attendance/studentID')
+  client.subscribe('rfid/attendance/studentIDFeedBack')
+})
 
-	console.log("Starting");
-	try {
-		await client.publish("rfid/attendance/web", "It works!");
-		// This line doesn't run until the server responds to the publish
-		await client.end();
-		// This line doesn't run until the client has disconnected without error
-		console.log("Done");
-	} catch (e){
-		// Do something about it!
-		console.log(e.stack);
-		process.exit();
-	}
+client.on('message', (topic, message) => {
+  switch (topic) {
+    case 'rfid/attendance/studentID':
+      return studentAttendanceRFID1(message)
+    case 'rfid/attendance/studentIDFeedBack':
+      return studentAttendanceRFID2(message)
+  }
+  console.log('No handler for topic %s', topic)
+})
+
+function studentAttendanceRFID1 (message) {
+  console.log('StudentID Received from RFID: %s', message)
+}
+
+function studentAttendanceRFID2 (message) {
+
 }
 //-------------------------------------------------//
 
