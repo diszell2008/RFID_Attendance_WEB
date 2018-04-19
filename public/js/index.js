@@ -14,26 +14,40 @@ var indexApp = angular.module("indexApp", ["firebase"]);
 indexApp.controller("AttendanceController", ["$scope", "$firebaseArray",
 function($scope, $firebaseArray)
 {
-  var ref = new Firebase("https://rfidwemoshsu.firebaseio.com/");
+  var config = {
+    apiKey: "AIzaSyA-i--1XoCEk6hsJwb8acETuL6fNQlsPJY",
+    authDomain: "test-f889d.firebaseapp.com",
+    databaseURL: "https://test-f889d.firebaseio.com",
+    projectId: "test-f889d",
+    storageBucket: "test-f889d.appspot.com",
+    messagingSenderId: "41107007188"
+  };
+  firebase.initializeApp(config);
+
+  var ref = firebase.database().ref();
   var refClasses = ref.child('Classes');
   var refClassDates;
   var refDate;
 
-  var authData = ref.getAuth();
+  var authData = firebase.auth().currentUser;
 
   $scope.classes = $firebaseArray(refClasses);
   $scope.theRoster;
 
   //Authentication isn't required for index.html, but it changes the appearance of the Navbar
   //Logout is shown if authenticated. Login and Sign Up are shown if not.
-  if(authData)
-  {
-    $scope.authenticated = true;
-  }
-  else
-  {
-    $scope.authenticated = false;
-  }
+
+  firebase.auth().onAuthStateChanged(function(user) {
+    if(user)
+    {
+      $scope.authenticated = true;
+    }
+    else
+    {
+      $scope.authenticated = false;
+    }
+  });
+
 
   $scope.selectClass = function(obj)
   {
@@ -55,7 +69,7 @@ function($scope, $firebaseArray)
 
   $scope.logout = function()
   {
-    ref.unauth();
+    firebase.auth().signOut()
     window.location.reload();
   };
 }]);

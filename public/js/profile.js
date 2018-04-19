@@ -14,14 +14,24 @@ var profileApp = angular.module("profileApp", ["firebase"]);
 profileApp.controller("ProfileController", ["$scope", "$firebaseArray",
 function($scope, $firebaseArray)
 {
-  var ref = new Firebase("https://rfidwemoshsu.firebaseio.com/");
-  var authData = ref.getAuth();
+  var config = {
+    apiKey: "AIzaSyA-i--1XoCEk6hsJwb8acETuL6fNQlsPJY",
+    authDomain: "test-f889d.firebaseapp.com",
+    databaseURL: "https://test-f889d.firebaseio.com",
+    projectId: "test-f889d",
+    storageBucket: "test-f889d.appspot.com",
+    messagingSenderId: "41107007188"
+  };
+  firebase.initializeApp(config);
+
+  var ref = firebase.database().ref();
+  var authData = firebase.auth().currentUser;
 
   if(authData)
   {
     $scope.logout = function()
     {
-      ref.unauth();
+      firebase.auth().signOut();
       window.location.href = "login.html";
     };
 

@@ -9,57 +9,123 @@
 //  signing a professor up, authenticating them, and creating an
 //  instructor record for them in Firebase.
 */
-
 var signupApp = angular.module("signupApp", ["firebase"]);
 
 signupApp.controller("SignUpController", ["$scope", "$firebaseAuth", "$http",
 function($scope, $firebaseAuth, $http)
 {
-  var ref = new Firebase("https://rfidwemoshsu.firebaseio.com/");
-  var auth = $firebaseAuth(ref);
-
-  $scope.signup = function()
-  {
-    $http(
-    {
-        method: "post",
-        url: "/signup",
-        headers: {"Content-Type": "application/x-www-form-urlencoded"},
-        data: $.param({"email":$scope.email, "password":sha256_digest($scope.password)})
-    })
-    .success(function(response)
-    {
-      $scope.login();
-    })
-    .error(function(response)
-    {
-      alert(response.error)
-    });
+  var config = {
+    apiKey: "AIzaSyA-i--1XoCEk6hsJwb8acETuL6fNQlsPJY",
+    authDomain: "test-f889d.firebaseapp.com",
+    databaseURL: "https://test-f889d.firebaseio.com",
+    projectId: "test-f889d",
+    storageBucket: "test-f889d.appspot.com",
+    messagingSenderId: "41107007188"
   };
+  firebase.initializeApp(config);
+  var ref = firebase.database().ref();
+  var auth = $firebaseAuth();
 
-  $scope.login = function()
-  {
-    ref.authWithPassword(
-      {
-        email    : $scope.email,
-        password : sha256_digest($scope.password)
-      },
-      function(error, authData)
-      {
-        if (error)
+  $scope.signup = function() {
+    var email = $scope.email;
+    var password = $scope.password;
+
+    // Create User with email and pass.
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+    .then(function(firebaseUser) {
+      // setInstructor with UID
+      firebase.auth().onAuthStateChanged(function(user){
+        if (user)
         {
-          console.log("Login Failed!", error);
+          $scope.setInstructor(user.uid);
         }
         else
         {
-          console.log("Authenticated successfully with payload:", authData);
+          // Bla Bla
+        }
+      });
+        // Switching To Dashboard
+        window.location.href = 'dashboard.html';
+    })
+    .catch(function(error) {
+      // Handle Errors here.
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      // [START_EXCLUDE]
+      if (errorCode == 'auth/weak-password') {
+        alert('The password is too weak.');
+      } else {
+        console.error(error);
+      }
+      // [END_EXCLUDE]
+    });
+  }
 
-          $scope.setInstructor(authData.uid);
+  $scope.login = function() {
+    if (authData) {
+     alert("Sign out")
+      firebase.auth().signOut();
+      // [END signout]
+    } else {
+      var email = $scope.username;
+      var password = $scope.password;
+      if (email.length < 4) {
+        alert('Please enter an email address.');
+        return;
+      }
+      if (password.length < 4) {
+        alert('Please enter a password.');
+        return;
+      }
+      // Sign in with email and pass.
+      // [START authwithemail]
+      firebase.auth().signInWithEmailAndPassword(email,password)
+         .then(function(firebaseUser) {
+             // Success
+             window.location.href = 'dashboard.html'
+             console.log("Authenticated successfully with payload:", authData);
+         })
+        .catch(function(error) {
+             // Error Handling
+             var errorCode = error.code;
+             var errorMessage = error.message;
+             if (errorCode === 'auth/wrong-password') {
+               alert('Wrong password.');
+             } else {
+               alert(errorMessage);
+             }
+        // [END_EXCLUDE]
+      });
+      // [END authwithemail]
+    }
+  };
+
+  $scope.setInstructor = function(userUID)
+  {
+    var ref = firebase.database().ref();
+    var refInstructors = ref.child('Instructors');
+
+    var theInstructorsRef = refInstructors.child(userUID);
+    theInstructorsRef.set(
+      {
+        firstName:$scope.firstName,
+        lastName:$scope.lastName
+      },
+      function(error)
+      {
+        if (error)
+        {
+          alert("Unable to complete account creation. Please have the admin remove your account before trying again.");
+        }
+        else
+        {
+          window.location.href = 'dashboard.html';
+
         }
       });
   };
 
-  $scope.setInstructor = function(uid)
+  $scope.setInstructorold = function(uid)
   {
     var instructorRef = ref.child("Instructors").child(uid);
 

@@ -13,7 +13,7 @@
 
 var express = require('express');
 var bodyParser = require('body-parser');
-var Firebase = require('firebase');
+var firebase = require('firebase');
 var http = require('http');
 
 var app = express();
@@ -27,7 +27,17 @@ http.createServer(app).listen(app.get('port'), function()
 {
     console.log('Server running.');
 });
+//-------------------------------------------------//
+//          Firebase Admin Config                  //
+//-------------------------------------------------//
+var admin = require('firebase-admin');
+var serviceAccount = require('/Users/teothuirum/Documents/GitHub/RFID_Attendance_WEB/test-f889d-firebase-adminsdk-6ul13-5ec6644fb0.json');
 
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: 'https://test-f889d.firebaseio.com'
+});
 //-------------------------------------------------//
 //                  Static Files                   //
 //-------------------------------------------------//
@@ -38,7 +48,19 @@ app.use(express.static(__dirname + '/public'));
 //                Account Creation                 //
 //-------------------------------------------------//
 
-var ref = new Firebase("https://rfidwemoshsu.firebaseio.com/");
+// Initialize Firebase
+var config = {
+  apiKey: "AIzaSyA-i--1XoCEk6hsJwb8acETuL6fNQlsPJY",
+  authDomain: "test-f889d.firebaseapp.com",
+  databaseURL: "https://test-f889d.firebaseio.com",
+  projectId: "test-f889d",
+  storageBucket: "test-f889d.appspot.com",
+  messagingSenderId: "41107007188"
+};
+firebase.initializeApp(config);
+
+var ref = firebase.database().ref();
+
 
 app.post('/signup', function(req, res)
 {
@@ -64,7 +86,7 @@ app.post('/signup', function(req, res)
 
     if(approved)
     {
-      ref.createUser(
+      ref.createUserWithEmailAndPassword(
       {
         email    : req.body.email,
         password : req.body.password
