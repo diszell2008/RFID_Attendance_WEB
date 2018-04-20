@@ -37,18 +37,17 @@ function($scope, $firebaseAuth)
   $scope.login = function() {
     firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
-       alert("Sign in Success")
-        //firebase.auth().signOut();
-        // [END signout]
-      } else {
+
+      }
+      else
+      {
         var email = $scope.username;
         var password = $scope.password;
-
         // Sign in with email and pass.
         // [START authwithemail]
         firebase.auth().signInWithEmailAndPassword(email,password)
            .then(function(firebaseUser) {
-               // Success
+               alert("Sign in Success")
                window.location.href = 'dashboard.html'
            })
           .catch(function(error) {
