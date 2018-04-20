@@ -15,12 +15,12 @@ indexApp.controller("AttendanceController", ["$scope", "$firebaseArray",
 function($scope, $firebaseArray)
 {
   var config = {
-    apiKey: "AIzaSyA-i--1XoCEk6hsJwb8acETuL6fNQlsPJY",
-    authDomain: "test-f889d.firebaseapp.com",
-    databaseURL: "https://test-f889d.firebaseio.com",
-    projectId: "test-f889d",
-    storageBucket: "test-f889d.appspot.com",
-    messagingSenderId: "41107007188"
+    apiKey: "AIzaSyDST-oSPo3WP-C-F9i_p-vFS7pWQw8WYNA",
+    authDomain: "rfidattendencesystemhsu.firebaseapp.com",
+    databaseURL: "https://rfidattendencesystemhsu.firebaseio.com",
+    projectId: "rfidattendencesystemhsu",
+    storageBucket: "rfidattendencesystemhsu.appspot.com",
+    messagingSenderId: "1083910663230"
   };
   firebase.initializeApp(config);
 

@@ -31,12 +31,12 @@ http.createServer(app).listen(app.get('port'), function()
 //          Firebase Admin Config                  //
 //-------------------------------------------------//
 var admin = require('firebase-admin');
-var serviceAccount = require('/Users/teothuirum/Documents/GitHub/RFID_Attendance_WEB/test-f889d-firebase-adminsdk-6ul13-5ec6644fb0.json');
+var serviceAccount = require('/Users/teothuirum/Documents/GitHub/RFID_Attendance_WEB/rfidattendencesystemhsu-firebase-adminsdk-ch34r-0b4911bd8f.json');
 
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    databaseURL: 'https://test-f889d.firebaseio.com'
+    databaseURL: 'https://rfidattendencesystemhsu.firebaseio.com'
 });
 //-------------------------------------------------//
 //                  Static Files                   //
@@ -50,12 +50,12 @@ app.use(express.static(__dirname + '/public'));
 
 // Initialize Firebase
 var config = {
-  apiKey: "AIzaSyA-i--1XoCEk6hsJwb8acETuL6fNQlsPJY",
-  authDomain: "test-f889d.firebaseapp.com",
-  databaseURL: "https://test-f889d.firebaseio.com",
-  projectId: "test-f889d",
-  storageBucket: "test-f889d.appspot.com",
-  messagingSenderId: "41107007188"
+  apiKey: "AIzaSyDST-oSPo3WP-C-F9i_p-vFS7pWQw8WYNA",
+  authDomain: "rfidattendencesystemhsu.firebaseapp.com",
+  databaseURL: "https://rfidattendencesystemhsu.firebaseio.com",
+  projectId: "rfidattendencesystemhsu",
+  storageBucket: "rfidattendencesystemhsu.appspot.com",
+  messagingSenderId: "1083910663230"
 };
 firebase.initializeApp(config);
 
