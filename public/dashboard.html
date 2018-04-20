@@ -102,8 +102,8 @@
             <label for="CRN">CRN:</label>
             <input
               type="number"
-              placeholder="31011"
-              min="0" max="99999"
+              placeholder="Example: 100"
+              min="100" max="9999"
               ng-required="true"
               class="form-control"
               data-toggle="tooltip" data-placement="top" title="The 5-digit CRN number for the class"
@@ -113,7 +113,7 @@
           <div class="form-group">
             <label for="building">Building:</label>
             <input type="text"
-              placeholder="Stuenkel"
+              placeholder="Example: Quang Trung"
               ng-required="true"
               class="form-control"
               data-toggle="tooltip" data-placement="top" title="The building where the class meets"
@@ -124,7 +124,7 @@
             <label for="roomNumber">Room Number:</label>
             <input
               type="text"
-              placeholder="016"
+              placeholder="Example: QA102"
               ng-required="true"
               data-toggle="tooltip" data-placement="top" title="The room number where the class meets"
               class="form-control"
@@ -134,10 +134,8 @@
           <div class="form-group">
             <label for="courseNumber">Course Number:</label>
             <input
-              type="number"
-              placeholder="101"
-              min="100"
-              max="999"
+              type="text"
+              placeholder="Example: TIN330DV01"
               ng-required="true"
               data-toggle="tooltip" data-placement="top" title="The number from the course name"
               class="form-control"

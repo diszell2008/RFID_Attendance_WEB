@@ -101,7 +101,7 @@ function($scope, $firebaseArray, $filter)
         {
           "CRN":$scope.CRN,
           "room":$scope.building + " " + $scope.roomNumber,
-          "className":"CSC" + $scope.courseNumber,
+          "className": $scope.courseNumber,
           "days":days,
           "startTime":$filter('date')($scope.startTime, "h:mm a"),
           "endTime":$filter('date')($scope.endTime, "h:mm a"),
