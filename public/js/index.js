@@ -45,6 +45,7 @@ function($scope, $firebaseArray)
     else
     {
       $scope.authenticated = false;
+      window.location.href = "login.html";
     }
   });
 
